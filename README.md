@@ -173,20 +173,60 @@ graph TB
 
 ## 快速开始
 
-### 基础运行
+> **Windows 用户快速指南**：查看 [WINDOWS.md](./WINDOWS.md) 获取详细的中文说明，包括常见问题解决。
+
+### 📦 直接下载（推荐，无需 Go 环境）
+
+访问 [Releases 页面](https://github.com/keggin-CHN/kiro2api/releases) 下载预编译的二进制文件：
+
+- **Windows**: `kiro2api-windows-amd64.exe`
+- **Linux**: `kiro2api-linux-amd64`
+- **macOS (Intel)**: `kiro2api-darwin-amd64`
+- **macOS (Apple Silicon)**: `kiro2api-darwin-arm64`
+
+下载后无需编译，直接运行即可（需要先配置环境变量）。
+
+### 🔨 本地构建（需要 Go 环境）
+
+#### Windows 用户
+
+```cmd
+# 方法 1: 使用 build.bat
+build.bat
+
+# 方法 2: 使用 PowerShell
+.\build.ps1
+
+# 方法 3: 手动构建
+go build -ldflags="-s -w" -o kiro2api.exe main.go
+```
+
+#### Linux/macOS 用户
 
 ```bash
 # 克隆并编译
 git clone <repository-url>
 cd kiro2api
-go build -o kiro2api main.go
+go build -ldflags="-s -w" -o kiro2api main.go
 
+# 或使用跨平台构建脚本
+chmod +x build.sh
+./build.sh  # 生成所有平台的可执行文件到 build/ 目录
+```
+
+**详细构建说明**：参见 [BUILD.md](./BUILD.md)
+
+### 基础运行
+
+```bash
 # 配置环境变量
 cp .env.example .env
 # 编辑 .env 文件，设置 KIRO_AUTH_TOKEN
 
 # 启动服务器
-./kiro2api
+./kiro2api  # Linux/macOS
+# 或
+kiro2api.exe  # Windows
 
 # 测试API
 curl -X POST http://localhost:8080/v1/messages \
@@ -524,6 +564,9 @@ curl -N -H "Authorization: Bearer $KIRO_CLIENT_TOKEN" \
 
 ## 更多资源
 
+- **GitHub Actions 使用指南**: [GITHUB_ACTIONS.md](./GITHUB_ACTIONS.md) - 如何使用 GitHub Actions 自动构建和下载可执行文件（中文详细教程）
+- **Windows 快速指南**: [WINDOWS.md](./WINDOWS.md) - Windows 用户快速上手指南（中文）
+- **构建指南**: [BUILD.md](./BUILD.md) - 详细的跨平台构建说明
 - **详细开发指南**: [CLAUDE.md](./CLAUDE.md)
 - **包结构说明**: 分层架构设计，遵循 SOLID 原则
 - **性能优化**: 缓存策略、并发控制、内存管理
