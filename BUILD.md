@@ -4,13 +4,53 @@
 
 ## 目录
 
+- [自动构建（推荐）](#自动构建推荐)
 - [前置要求](#前置要求)
 - [Windows 构建](#windows-构建)
 - [跨平台构建](#跨平台构建)
 - [构建选项](#构建选项)
 - [验证构建](#验证构建)
 
+## 自动构建（推荐）
+
+**无需本地 Go 环境，直接下载预编译版本**
+
+### GitHub Releases（稳定版本）
+
+1. 访问 [Releases 页面](https://github.com/keggin-CHN/kiro2api/releases)
+2. 选择最新版本
+3. 下载对应平台的可执行文件：
+   - Windows: `kiro2api-windows-amd64.exe`
+   - Linux: `kiro2api-linux-amd64`
+   - macOS (Intel): `kiro2api-darwin-amd64`
+   - macOS (Apple Silicon): `kiro2api-darwin-arm64`
+
+### GitHub Actions（开发版本）
+
+获取最新代码的自动构建版本：
+
+1. 访问 [Actions 页面](https://github.com/keggin-CHN/kiro2api/actions/workflows/build-binaries.yml)
+2. 点击最新的成功构建（绿色勾）
+3. 滚动到页面底部的 "Artifacts" 区域
+4. 下载对应平台的构建产物
+
+> **注意**：从 Actions 下载需要登录 GitHub 账号。Artifacts 保存 90 天后自动删除。
+
+### 自动构建触发条件
+
+GitHub Actions 会在以下情况自动构建：
+- 推送到 `main` 或 `master` 分支
+- 创建新的 Pull Request
+- 推送新的版本标签（`v*`）
+- 手动触发（在 Actions 页面点击 "Run workflow"）
+
+版本发布（带标签）会自动创建 GitHub Release 并上传所有平台的可执行文件。
+
+---
+
 ## 前置要求
+
+**仅在本地构建时需要**
 
 在构建之前，请确保已安装：
 

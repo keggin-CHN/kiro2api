@@ -175,7 +175,18 @@ graph TB
 
 > **Windows 用户快速指南**：查看 [WINDOWS.md](./WINDOWS.md) 获取详细的中文说明，包括常见问题解决。
 
-### 构建可执行文件
+### 📦 直接下载（推荐，无需 Go 环境）
+
+访问 [Releases 页面](https://github.com/keggin-CHN/kiro2api/releases) 下载预编译的二进制文件：
+
+- **Windows**: `kiro2api-windows-amd64.exe`
+- **Linux**: `kiro2api-linux-amd64`
+- **macOS (Intel)**: `kiro2api-darwin-amd64`
+- **macOS (Apple Silicon)**: `kiro2api-darwin-arm64`
+
+下载后无需编译，直接运行即可（需要先配置环境变量）。
+
+### 🔨 本地构建（需要 Go 环境）
 
 #### Windows 用户
 

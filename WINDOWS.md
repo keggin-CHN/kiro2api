@@ -1,8 +1,32 @@
 # Windows 快速开始指南
 
-本指南帮助 Windows 用户快速构建和运行 kiro2api。
+本指南帮助 Windows 用户快速获取和运行 kiro2api。
 
-## 📋 前置要求
+## 🎯 方式一：直接下载（推荐，无需 Go 环境）
+
+**适合没有 Go 语言环境的用户**
+
+1. **访问 GitHub Releases 页面**
+   - 打开：https://github.com/keggin-CHN/kiro2api/releases
+   - 选择最新版本
+
+2. **下载 Windows 可执行文件**
+   - 点击下载 `kiro2api-windows-amd64.exe`
+   - 文件大约 24MB
+
+3. **直接运行**
+   - 无需安装 Go 语言环境
+   - 下载后即可使用（需要先配置，见下方"配置"章节）
+
+> **提示**：每次代码更新后，GitHub Actions 会自动编译新版本。在 [Actions 页面](https://github.com/keggin-CHN/kiro2api/actions/workflows/build-binaries.yml) 可以下载最新构建的二进制文件（需要登录 GitHub）。
+
+---
+
+## 🔨 方式二：本地构建（需要 Go 环境）
+
+**适合有 Go 语言环境的开发者**
+
+### 📋 前置要求
 
 1. **安装 Go 语言**
    - 访问 [Go 官方下载页面](https://golang.org/dl/)
@@ -10,7 +34,7 @@
    - 运行安装程序，使用默认设置
    - 打开命令提示符，输入 `go version` 验证安装
 
-## 🚀 快速构建
+### 🚀 构建步骤
 
 ### 方法 1：使用批处理脚本（推荐新手）
 
