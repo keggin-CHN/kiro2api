@@ -11,7 +11,7 @@ set MAIN_FILE=main.go
 
 REM Build for Windows (with CGO disabled for static binary)
 set CGO_ENABLED=0
-go build -tags=nomsgpack -ldflags="-s -w" -o %BINARY_NAME% %MAIN_FILE%
+go build -tags=sonic_no_asm -ldflags="-s -w" -o %BINARY_NAME% %MAIN_FILE%
 
 if %ERRORLEVEL% EQU 0 (
     echo.

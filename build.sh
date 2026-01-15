@@ -17,9 +17,9 @@ echo "Building kiro2api v${VERSION}"
 echo "Build time: ${BUILD_TIME}"
 echo ""
 
-# Build flags (with nomsgpack tag for CGO_ENABLED=0 compatibility)
+# Build flags (with sonic_no_asm tag for CGO_ENABLED=0 compatibility)
 LDFLAGS="-s -w -X main.Version=${VERSION} -X main.BuildTime=${BUILD_TIME}"
-TAGS="-tags=nomsgpack"
+TAGS="-tags=sonic_no_asm"
 
 # Build for Windows
 echo "Building for Windows (amd64)..."

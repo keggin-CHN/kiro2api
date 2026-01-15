@@ -13,7 +13,7 @@ $env:CGO_ENABLED = "0"
 
 # Build for Windows
 Write-Host "Compiling..." -ForegroundColor Yellow
-go build -tags=nomsgpack -ldflags="-s -w" -o $BinaryName $MainFile
+go build -tags=sonic_no_asm -ldflags="-s -w" -o $BinaryName $MainFile
 
 if ($LASTEXITCODE -eq 0) {
     Write-Host ""

@@ -58,9 +58,9 @@ jobs:
         mkdir -p build
         
         # Build with CGO disabled for static binaries
-        # Use tags to ensure sonic falls back to standard library when needed
+        # Use sonic_no_asm tag to disable assembly optimizations (required for CGO_ENABLED=0)
         CGO_ENABLED=0 go build \
-          -tags=nomsgpack \
+          -tags=sonic_no_asm \
           -ldflags="-s -w -X main.Version=${VERSION} -X main.BuildTime=${BUILD_TIME}" \
           -o build/kiro2api-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.ext }} \
           main.go
