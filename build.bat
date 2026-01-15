@@ -9,9 +9,8 @@ REM Set build parameters
 set BINARY_NAME=kiro2api.exe
 set MAIN_FILE=main.go
 
-REM Build for Windows (with CGO disabled for static binary)
-set CGO_ENABLED=0
-go build -tags=sonic_no_asm -ldflags="-s -w" -o %BINARY_NAME% %MAIN_FILE%
+REM Build for Windows
+go build -ldflags="-s -w" -o %BINARY_NAME% %MAIN_FILE%
 
 if %ERRORLEVEL% EQU 0 (
     echo.

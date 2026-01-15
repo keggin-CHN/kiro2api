@@ -1,4 +1,4 @@
-name: Build Binaries
+name: Build Windows Binary
 
 on:
   push:
@@ -15,23 +15,8 @@ on:
 
 jobs:
   build:
-    name: Build for ${{ matrix.os }}-${{ matrix.arch }}
+    name: Build Windows executable
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        include:
-          - os: windows
-            arch: amd64
-            ext: .exe
-          - os: linux
-            arch: amd64
-            ext: ''
-          - os: darwin
-            arch: amd64
-            ext: ''
-          - os: darwin
-            arch: arm64
-            ext: ''
     
     steps:
     - name: Checkout code
@@ -40,15 +25,15 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v5
       with:
-        go-version: '1.24.0'
+        go-version: '1.23'
 
     - name: Get dependencies
       run: go mod download
 
-    - name: Build binary
+    - name: Build Windows binary
       env:
-        GOOS: ${{ matrix.os }}
-        GOARCH: ${{ matrix.arch }}
+        GOOS: windows
+        GOARCH: amd64
       run: |
         # Set version info
         VERSION=$(git describe --tags --always --dirty 2>/dev/null || echo "dev")
@@ -57,19 +42,17 @@ jobs:
         # Create build directory
         mkdir -p build
         
-        # Build with CGO disabled for static binaries
-        # Use sonic_no_asm tag to disable assembly optimizations (required for CGO_ENABLED=0)
-        CGO_ENABLED=0 go build \
-          -tags=sonic_no_asm \
+        # Build Windows executable (CGO enabled by default for better sonic compatibility)
+        go build \
           -ldflags="-s -w -X main.Version=${VERSION} -X main.BuildTime=${BUILD_TIME}" \
-          -o build/kiro2api-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.ext }} \
+          -o build/kiro2api-windows-amd64.exe \
           main.go
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: kiro2api-${{ matrix.os }}-${{ matrix.arch }}
-        path: build/kiro2api-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.ext }}
+        name: kiro2api-windows-amd64
+        path: build/kiro2api-windows-amd64.exe
         if-no-files-found: error
 
   release:
@@ -84,16 +67,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Download all artifacts
+    - name: Download artifact
       uses: actions/download-artifact@v4
       with:
-        path: artifacts
-
-    - name: Prepare release assets
-      run: |
-        mkdir -p release
-        find artifacts -type f -exec cp {} release/ \;
-        ls -lh release/
+        name: kiro2api-windows-amd64
+        path: release
 
     - name: Create Release
       uses: softprops/action-gh-release@v1
@@ -105,13 +83,10 @@ jobs:
         body: |
           ## 下载说明 / Download Instructions
           
-          请根据您的操作系统下载对应的可执行文件：
-          Please download the appropriate executable for your operating system:
+          下载 Windows 可执行文件：
+          Download the Windows executable:
           
           - **Windows**: `kiro2api-windows-amd64.exe`
-          - **Linux**: `kiro2api-linux-amd64`
-          - **macOS (Intel)**: `kiro2api-darwin-amd64`
-          - **macOS (Apple Silicon)**: `kiro2api-darwin-arm64`
           
           下载后，请参考 [WINDOWS.md](https://github.com/${{ github.repository }}/blob/main/WINDOWS.md) 或 [BUILD.md](https://github.com/${{ github.repository }}/blob/main/BUILD.md) 配置和运行程序。
           
