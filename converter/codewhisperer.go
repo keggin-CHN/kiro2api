@@ -321,7 +321,7 @@ func BuildCodeWhispererRequest(anthropicReq types.AnthropicRequest, ctx *gin.Con
 			// 根据req.json的实际结构，确保JSON Schema完整性
 			cwTool := types.CodeWhispererTool{}
 			cwTool.ToolSpecification.Name = tool.Name
-			
+
 			// 限制 description 长度为 10000 字符
 			if len(tool.Description) > config.MaxToolDescriptionLength {
 				cwTool.ToolSpecification.Description = tool.Description[:config.MaxToolDescriptionLength]
