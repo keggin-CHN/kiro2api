@@ -173,6 +173,8 @@ graph TB
 
 ## 快速开始
 
+> **Windows 用户快速指南**：查看 [WINDOWS.md](./WINDOWS.md) 获取详细的中文说明，包括常见问题解决。
+
 ### 构建可执行文件
 
 #### Windows 用户
@@ -551,6 +553,7 @@ curl -N -H "Authorization: Bearer $KIRO_CLIENT_TOKEN" \
 
 ## 更多资源
 
+- **Windows 快速指南**: [WINDOWS.md](./WINDOWS.md) - Windows 用户快速上手指南（中文）
 - **构建指南**: [BUILD.md](./BUILD.md) - 详细的跨平台构建说明
 - **详细开发指南**: [CLAUDE.md](./CLAUDE.md)
 - **包结构说明**: 分层架构设计，遵循 SOLID 原则
