@@ -564,6 +564,7 @@ curl -N -H "Authorization: Bearer $KIRO_CLIENT_TOKEN" \
 
 ## 更多资源
 
+- **GitHub Actions 使用指南**: [GITHUB_ACTIONS.md](./GITHUB_ACTIONS.md) - 如何使用 GitHub Actions 自动构建和下载可执行文件（中文详细教程）
 - **Windows 快速指南**: [WINDOWS.md](./WINDOWS.md) - Windows 用户快速上手指南（中文）
 - **构建指南**: [BUILD.md](./BUILD.md) - 详细的跨平台构建说明
 - **详细开发指南**: [CLAUDE.md](./CLAUDE.md)
