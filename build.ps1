@@ -8,9 +8,12 @@ Write-Host ""
 $BinaryName = "kiro2api.exe"
 $MainFile = "main.go"
 
+# Set CGO_ENABLED=0 for static binary
+$env:CGO_ENABLED = "0"
+
 # Build for Windows
 Write-Host "Compiling..." -ForegroundColor Yellow
-go build -ldflags="-s -w" -o $BinaryName $MainFile
+go build -tags=nomsgpack -ldflags="-s -w" -o $BinaryName $MainFile
 
 if ($LASTEXITCODE -eq 0) {
     Write-Host ""

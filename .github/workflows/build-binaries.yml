@@ -49,14 +49,19 @@ jobs:
       env:
         GOOS: ${{ matrix.os }}
         GOARCH: ${{ matrix.arch }}
-        CGO_ENABLED: 0
       run: |
         # Set version info
         VERSION=$(git describe --tags --always --dirty 2>/dev/null || echo "dev")
         BUILD_TIME=$(date -u '+%Y-%m-%d_%H:%M:%S')
         
-        # Build
-        go build -ldflags="-s -w -X main.Version=${VERSION} -X main.BuildTime=${BUILD_TIME}" \
+        # Create build directory
+        mkdir -p build
+        
+        # Build with CGO disabled for static binaries
+        # Use tags to ensure sonic falls back to standard library when needed
+        CGO_ENABLED=0 go build \
+          -tags=nomsgpack \
+          -ldflags="-s -w -X main.Version=${VERSION} -X main.BuildTime=${BUILD_TIME}" \
           -o build/kiro2api-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.ext }} \
           main.go
 
