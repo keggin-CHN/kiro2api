@@ -1,4 +1,4 @@
-name: Build Windows Binary
+name: Build Windows Binaries
 
 on:
   push:
@@ -30,7 +30,7 @@ jobs:
     - name: Get dependencies
       run: go mod download
 
-    - name: Build Windows binary
+    - name: Build Windows 64-bit binary
       env:
         GOOS: windows
         GOARCH: amd64
@@ -42,7 +42,7 @@ jobs:
         # Create build directory
         mkdir -p build
         
-        # Build Windows executable (CGO enabled by default for better sonic compatibility)
+        # Build Windows 64-bit executable
         go build \
           -ldflags="-s -w -X main.Version=${VERSION} -X main.BuildTime=${BUILD_TIME}" \
           -o build/kiro2api-windows-amd64.exe \
@@ -59,7 +59,7 @@ jobs:
     name: Create Release
     needs: build
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: github.event_name == 'push' && (startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
     permissions:
       contents: write
     
@@ -67,29 +67,62 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Download artifact
+    - name: Download all artifacts
       uses: actions/download-artifact@v4
       with:
-        name: kiro2api-windows-amd64
-        path: release
+        path: artifacts
+
+    - name: Prepare release assets
+      run: |
+        mkdir -p release
+        find artifacts -type f -exec cp {} release/ \;
+        ls -lh release/
+
+    - name: Determine release tag
+      id: tag
+      run: |
+        if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+          echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          echo "is_tag=true" >> $GITHUB_OUTPUT
+        else
+          echo "tag=latest-$(date -u '+%Y%m%d-%H%M%S')" >> $GITHUB_OUTPUT
+          echo "is_tag=false" >> $GITHUB_OUTPUT
+        fi
 
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
+        tag_name: ${{ steps.tag.outputs.tag }}
+        name: ${{ steps.tag.outputs.is_tag == 'true' && steps.tag.outputs.tag || format('Latest Build - {0}', steps.tag.outputs.tag) }}
         files: release/*
         draft: false
-        prerelease: false
+        prerelease: ${{ steps.tag.outputs.is_tag == 'false' }}
         generate_release_notes: true
         body: |
           ## 下载说明 / Download Instructions
           
-          下载 Windows 可执行文件：
-          Download the Windows executable:
+          请下载 Windows 64位 可执行文件：
+          Please download the Windows 64-bit executable:
           
-          - **Windows**: `kiro2api-windows-amd64.exe`
+          - **Windows 64位 (64-bit)**: `kiro2api-windows-amd64.exe`
+          
+          > **注意 / Note**: 由于项目依赖的 bytedance/sonic 库不支持 32位系统，目前仅提供 64位版本。
+          > Due to bytedance/sonic library limitations, only 64-bit builds are available. 32-bit systems are not supported.
+          
+          > 如果您使用 32位 Windows 系统，建议：
+          > If you're using 32-bit Windows, please consider:
+          > 1. 升级到 64位 Windows 系统 / Upgrade to 64-bit Windows
+          > 2. 使用虚拟机或 Docker 运行 64位版本 / Use VM or Docker to run 64-bit version
           
           下载后，请参考 [WINDOWS.md](https://github.com/${{ github.repository }}/blob/main/WINDOWS.md) 或 [BUILD.md](https://github.com/${{ github.repository }}/blob/main/BUILD.md) 配置和运行程序。
           
           After downloading, please refer to [WINDOWS.md](https://github.com/${{ github.repository }}/blob/main/WINDOWS.md) or [BUILD.md](https://github.com/${{ github.repository }}/blob/main/BUILD.md) for configuration and usage instructions.
+          
+          ---
+          
+          **构建信息 / Build Info:**
+          - Commit: ${{ github.sha }}
+          - Branch: ${{ github.ref_name }}
+          - Build Time: ${{ github.event.head_commit.timestamp }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
