@@ -290,7 +290,7 @@ func TestExtractToolUsesFromMessage(t *testing.T) {
 		toolID := "tool_abc123"
 		toolName := "get_weather"
 		toolInput := any(map[string]any{"location": "Tokyo"})
-		
+
 		content := []types.ContentBlock{
 			{
 				Type: "text",
@@ -644,4 +644,3 @@ func TestBuildCodeWhispererRequest_OrphanUserMessages(t *testing.T) {
 		assert.Equal(t, "第三个问题（当前）", cwReq.ConversationState.CurrentMessage.UserInputMessage.Content)
 	})
 }
-

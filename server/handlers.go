@@ -356,14 +356,14 @@ func handleNonStreamRequest(c *gin.Context, anthropicReq types.AnthropicRequest,
 	outputTokens := 0
 	for _, contentBlock := range contexts {
 		blockType, _ := contentBlock["type"].(string)
-		
+
 		switch blockType {
 		case "text":
 			// 文本块：基于实际发送的文本内容
 			if text, ok := contentBlock["text"].(string); ok {
 				outputTokens += estimator.EstimateTextTokens(text)
 			}
-		
+
 		case "tool_use":
 			// 工具调用块：基于实际发送的工具名称和参数
 			// 这里使用与 SSE 响应相同的 token 计算逻辑

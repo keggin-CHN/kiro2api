@@ -116,7 +116,7 @@ func (e *TokenEstimator) EstimateTokens(req *types.CountTokensRequest) int {
 					}
 
 					schemaLen := len(jsonBytes)
-					schemaTokens := int(math.Ceil(float64(schemaLen) / schemaCharsPerToken))  // 进一法
+					schemaTokens := int(math.Ceil(float64(schemaLen) / schemaCharsPerToken)) // 进一法
 
 					// $schema字段URL开销（优化：降低开销）
 					if strings.Contains(string(jsonBytes), "$schema") {
@@ -249,7 +249,7 @@ func (e *TokenEstimator) EstimateTextTokens(text string) int {
 			charsPerToken = 2.5
 		}
 
-		nonChineseTokens = int(math.Ceil(float64(nonChineseChars) / charsPerToken))  // 进一法
+		nonChineseTokens = int(math.Ceil(float64(nonChineseChars) / charsPerToken)) // 进一法
 		if nonChineseTokens < 1 {
 			nonChineseTokens = 1 // 至少1 token
 		}

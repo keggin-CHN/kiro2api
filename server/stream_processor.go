@@ -41,7 +41,7 @@ type StreamProcessorContext struct {
 	// 工具调用跟踪
 	toolUseIdByBlockIndex map[int]string
 	completedToolUseIds   map[string]bool // 已完成的工具ID集合（用于stop_reason判断）
-	
+
 	// *** 新增：JSON字节累加器（修复分段整除精度损失） ***
 	// 问题：每个 input_json_delta 单独计算 len(partialJSON)/4 会导致小于4字节的分段被舍弃
 	// 解决：累加每个块的JSON字节数，在 content_block_stop 时一次性计算 token
@@ -184,10 +184,10 @@ func (ctx *StreamProcessorContext) processToolUseStop(dataMap map[string]any) {
 	// *** 修复：在块结束时计算累加的JSON字节数的token ***
 	// 使用进一法（向上取整）确保不低估token消耗
 	if jsonBytes, exists := ctx.jsonBytesByBlockIndex[idx]; exists && jsonBytes > 0 {
-		tokens := (jsonBytes + 3) / 4  // 进一法: ceil(jsonBytes / 4)
+		tokens := (jsonBytes + 3) / 4 // 进一法: ceil(jsonBytes / 4)
 		ctx.totalOutputTokens += tokens
 		delete(ctx.jsonBytesByBlockIndex, idx)
-		
+
 		logger.Debug("content_block_stop计算JSON tokens",
 			logger.Int("block_index", idx),
 			logger.Int("json_bytes", jsonBytes),
@@ -251,11 +251,11 @@ func (ctx *StreamProcessorContext) sendFinalEvents() error {
 	if outputTokens < 1 {
 		// 检查是否有任何内容被发送
 		hasContent := len(ctx.completedToolUseIds) > 0 ||
-		              len(ctx.toolUseIdByBlockIndex) > 0 ||
-		              ctx.totalProcessedEvents > 0
+			len(ctx.toolUseIdByBlockIndex) > 0 ||
+			ctx.totalProcessedEvents > 0
 
 		if hasContent {
-			outputTokens = 1  // 最小保护：至少 1 token
+			outputTokens = 1 // 最小保护：至少 1 token
 			logger.Debug("触发最小token保护",
 				logger.Int("processed_events", ctx.totalProcessedEvents),
 				logger.Int("completed_tools", len(ctx.completedToolUseIds)),
@@ -418,14 +418,14 @@ func (esp *EventStreamProcessor) processEvent(event parser.SSEEvent) error {
 		// 内容增量事件：累计实际文本或 JSON 内容的 token
 		if delta, ok := dataMap["delta"].(map[string]any); ok {
 			deltaType, _ := delta["type"].(string)
-			
+
 			switch deltaType {
 			case "text_delta":
 				// 文本内容增量
 				if text, ok := delta["text"].(string); ok {
 					esp.ctx.totalOutputTokens += esp.ctx.tokenEstimator.EstimateTextTokens(text)
 				}
-			
+
 			case "input_json_delta":
 				// *** 修复：累加JSON字节数，延迟到content_block_stop时统一计算 ***
 				// 问题：分段整除导致精度损失（例如 3字节/4=0, 2字节/4=0）
@@ -436,29 +436,29 @@ func (esp *EventStreamProcessor) processEvent(event parser.SSEEvent) error {
 				}
 			}
 		}
-	
+
 	case "content_block_start":
 		// 内容块开始事件：累计结构性 token
 		// 根据 Claude 官方文档，tool_use 块的结构字段（type, id, name）也会消耗 token
 		if contentBlock, ok := dataMap["content_block"].(map[string]any); ok {
 			blockType, _ := contentBlock["type"].(string)
-			
+
 			if blockType == "tool_use" {
 				// 工具调用结构开销：
 				// - "type": "tool_use" ≈ 3 tokens
-				// - "id": "toolu_xxx" ≈ 8 tokens  
+				// - "id": "toolu_xxx" ≈ 8 tokens
 				// - "name" 关键字 ≈ 1 token
 				// - 工具名称本身的 token（使用 estimateToolName 计算）
 				esp.ctx.totalOutputTokens += 12 // 结构字段固定开销
-				
+
 				if toolName, ok := contentBlock["name"].(string); ok {
 					esp.ctx.totalOutputTokens += esp.ctx.tokenEstimator.EstimateTextTokens(toolName)
 				}
 			}
 		}
-	
-	// 其他事件类型（message_start, content_block_stop, message_delta, message_stop 等）
-	// 不包含实际内容，不累计 token
+
+		// 其他事件类型（message_start, content_block_stop, message_delta, message_stop 等）
+		// 不包含实际内容，不累计 token
 	}
 
 	esp.ctx.c.Writer.Flush()
